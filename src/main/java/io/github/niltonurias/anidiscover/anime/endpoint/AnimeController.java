@@ -1,0 +1,57 @@
+package io.github.niltonurias.anidiscover.anime.endpoint;
+
+import io.github.niltonurias.anidiscover.anime.domain.AnimeService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/anime")
+@CrossOrigin
+public class AnimeController {
+
+    private final AnimeAssembler assembler;
+    private final AnimeService service;
+
+    public AnimeController(final AnimeAssembler assembler, final AnimeService service) {
+        this.assembler = assembler;
+        this.service = service;
+    }
+
+    @PostMapping
+    public ResponseEntity<AnimeResource> create(@RequestBody AnimeResource anime) {
+        var animePersisted = this.service.create(this.assembler.toEntity(anime));
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.assembler.toResource(animePersisted));
+    }
+
+    @PatchMapping("/{id}")
+    public AnimeResource update(@PathVariable UUID id, @RequestBody AnimeResource anime) {
+        var animeUpdated = this.service.update(id, this.assembler.toEntity(anime));
+        return this.assembler.toResource(animeUpdated);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+        this.service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}")
+    public AnimeResource findById(@PathVariable UUID id) {
+        return this.assembler.toResource(this.service.findById(id));
+    }
+
+    @GetMapping
+    public Page<AnimeResource> findAll(@RequestParam(required = false, defaultValue = "0") int page,
+                                       @RequestParam(required = false, defaultValue = "20") int size) {
+        var entityPage = this.service.findAllPaged(PageRequest.of(page, size));
+        var resources = entityPage.getContent().stream().map(assembler::toResource).toList();
+        return new PageImpl<>(resources, entityPage.getPageable(), entityPage.getTotalElements());
+    }
+}
