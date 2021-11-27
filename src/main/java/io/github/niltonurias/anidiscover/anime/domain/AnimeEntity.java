@@ -26,6 +26,9 @@ public class AnimeEntity extends BaseEntity {
     private String coverImage;
     private String bannerImage;
     private Long duration;
+
+    @Lob
+    @Column(length = 8000)
     private String description;
 
     @Enumerated(EnumType.STRING)
@@ -34,7 +37,7 @@ public class AnimeEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private SeasonEnum season;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(name = "anime_genre",
             joinColumns = @JoinColumn(name = "anime_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id"))

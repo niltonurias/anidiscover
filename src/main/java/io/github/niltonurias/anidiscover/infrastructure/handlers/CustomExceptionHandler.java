@@ -36,6 +36,8 @@ public class CustomExceptionHandler {
 
         if (ex instanceof BaseException baseException) {
             message.setMessage(getMessageFromExceptionEnum(baseException.getCode()));
+        } else {
+            message.setMessage(ex.getMessage());
         }
 
         return ResponseEntity.status(status).body(message);

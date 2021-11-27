@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Entity;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import java.util.Objects;
 import java.util.UUID;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "genre")
 public class GenreEntity extends BaseEntity {
+    @OrderBy
     private String name;
 
     @Builder

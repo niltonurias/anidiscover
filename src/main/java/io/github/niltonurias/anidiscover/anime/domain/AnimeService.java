@@ -19,17 +19,13 @@ public record AnimeService(AnimeRepository repository) {
 
     public AnimeEntity create(AnimeEntity entity) {
         var existEntity = this.repository.findByTitleAndSeasonAndSeasonYear(entity.getTitle(), entity.getSeason(), entity.getSeasonYear());
-
-        if (!Objects.isNull(existEntity)) {
-            throw new ConflictException(existEntity);
-        }
-
+        existEntity.ifPresent(anime -> { throw new ConflictException(anime); });
         return this.repository.save(entity);
     }
 
     public AnimeEntity update(UUID id, AnimeEntity entity) {
         var oldAnime = this.findById(id);
-        merge(oldAnime, entity);
+        oldAnime.mergeWith(entity);
         return this.repository.save(oldAnime);
     }
 
@@ -48,34 +44,5 @@ public record AnimeService(AnimeRepository repository) {
 
     public Page<AnimeEntity> findAllPaged(Pageable pageable) {
         return this.repository.findAll(pageable);
-    }
-
-    private void merge(AnimeEntity oldEntity, AnimeEntity newEntity) {
-        if (Strings.isNotBlank(newEntity.getBannerImage()))
-            oldEntity.setBannerImage(newEntity.getBannerImage());
-
-        if (Strings.isNotBlank(newEntity.getCoverImage()))
-            oldEntity.setCoverImage(newEntity.getCoverImage());
-
-        if (Strings.isNotBlank(newEntity.getDescription()))
-            oldEntity.setDescription(newEntity.getDescription());
-
-        if (!Objects.isNull(newEntity.getDuration()))
-            oldEntity.setDuration(newEntity.getDuration());
-
-        if (ObjectUtils.isEmpty(newEntity.getGenres()))
-            oldEntity.setGenres(newEntity.getGenres());
-
-        if (!Objects.isNull(newEntity.getSeason()))
-            oldEntity.setSeason(newEntity.getSeason());
-
-        if (!Objects.isNull(newEntity.getSeasonYear()))
-            oldEntity.setSeasonYear(newEntity.getSeasonYear());
-
-        if (!Objects.isNull(newEntity.getStatus()))
-            oldEntity.setStatus(newEntity.getStatus());
-
-        if (Strings.isNotBlank(newEntity.getTitle()))
-            oldEntity.setTitle(newEntity.getTitle());
     }
 }

@@ -16,18 +16,14 @@ import java.util.UUID;
 public record GenreService(GenreRepository repository) {
 
     public GenreEntity create(GenreEntity entity) {
-        var existGenre = findByName(entity.getName());
-
-        if (!Objects.isNull(existGenre)) {
-            throw new ConflictException(existGenre);
-        }
-
+        var existGenre = this.repository.findByName(entity.getName());
+        existGenre.ifPresent(genre -> { throw new ConflictException(genre); });
         return this.repository.save(entity);
     }
 
     public GenreEntity update(UUID id, GenreEntity entity) {
         var oldGenre = this.findById(id);
-        merge(oldGenre, entity);
+        oldGenre.mergeWith(entity);
         return this.repository.save(oldGenre);
     }
 
@@ -40,19 +36,11 @@ public record GenreService(GenreRepository repository) {
         return this.repository.findById(id).orElseThrow(() -> new NotFoundException(ExceptionEnum.GENRE_NOT_FOUND));
     }
 
-    public GenreEntity findByName(String name) {
-        return this.repository.findByName(name).orElseThrow(() -> new NotFoundException(ExceptionEnum.GENRE_NOT_FOUND));
-    }
-
     public List<GenreEntity> findBy() {
         throw new NotYetImplementedException();
     }
 
     public Page<GenreEntity> findAllPaged(Pageable pageable) {
         return this.repository.findAll(pageable);
-    }
-
-    private void merge(GenreEntity oldGenre, GenreEntity newGenre) {
-        oldGenre.setName(newGenre.getName());
     }
 }
