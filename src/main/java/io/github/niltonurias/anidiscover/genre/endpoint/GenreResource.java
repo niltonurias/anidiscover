@@ -12,7 +12,6 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-@JsonPropertyOrder({"id", "name", "links"})
 public class GenreResource extends BaseResource<GenreResource> {
     private String name;
 

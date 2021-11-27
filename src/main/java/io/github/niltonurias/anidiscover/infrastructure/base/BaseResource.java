@@ -11,6 +11,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BaseResource<RESOURCE extends RepresentationModel<? extends RESOURCE>> extends RepresentationModel<RESOURCE> {
-    @JsonProperty("id")
+    @JsonProperty(value = "id", index = 1)
     private UUID objectId;
 }
