@@ -13,6 +13,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "genre")
 public class GenreEntity extends BaseEntity {

@@ -1,0 +1,24 @@
+server:
+  servlet:
+    context-path: /api
+compression:
+  enabled: true
+
+spring:
+  jpa:
+    show-sql: true
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: update
+  jackson:
+    default-property-inclusion: non_null
+
+  # Enabling H2 Console
+  datasource:
+    url: jdbc:h2:~/anidiscover
+
+  h2:
+    console:
+      enabled: true
+      settings:
+        web-allow-others: true

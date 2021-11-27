@@ -1,15 +1,9 @@
 package io.github.niltonurias.anidiscover.infrastructure.exceptions;
 
-import io.github.niltonurias.anidiscover.enums.NotFoundEnum;
+import io.github.niltonurias.anidiscover.enums.ExceptionEnum;
 
-public class NotFoundException extends RuntimeException {
-    private final NotFoundEnum code;
-
-    public NotFoundException(NotFoundEnum code) {
-        this.code = code;
-    }
-
-    public NotFoundEnum getCode() {
-        return this.code;
+public class NotFoundException extends BaseException {
+    public NotFoundException(ExceptionEnum code) {
+        super(code);
     }
 }

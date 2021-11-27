@@ -7,20 +7,23 @@ import org.springframework.stereotype.Component;
 @Component
 public class GenreAssembler implements BaseAssembler<GenreResource, GenreEntity> {
     @Override
-    public GenreResource toResource(GenreEntity resource) {
-        return GenreResource
+    public GenreResource toResource(GenreEntity entity) {
+        var resource = GenreResource
                 .builder()
-                    .id(resource.getId())
-                    .name(resource.getName())
+                .id(entity.getId())
+                .name(entity.getName())
                 .build();
+
+        addSelfLink(GenreController.class, resource);
+        return resource;
     }
 
     @Override
-    public GenreEntity toEntity(GenreResource entity) {
+    public GenreEntity toEntity(GenreResource resource) {
         return GenreEntity
                 .builder()
-                    .id(entity.getObjectId())
-                    .name(entity.getName())
+                    .id(resource.getObjectId())
+                    .name(resource.getName())
                 .build();
     }
 }

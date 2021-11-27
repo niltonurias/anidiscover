@@ -1,6 +1,8 @@
 package io.github.niltonurias.anidiscover.anime.endpoint;
 
+import io.github.niltonurias.anidiscover.anime.domain.AnimeEntity;
 import io.github.niltonurias.anidiscover.anime.domain.AnimeService;
+import io.github.niltonurias.anidiscover.infrastructure.exceptions.ConflictException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -26,8 +28,16 @@ public class AnimeController {
 
     @PostMapping
     public ResponseEntity<AnimeResource> create(@RequestBody AnimeResource anime) {
-        var animePersisted = this.service.create(this.assembler.toEntity(anime));
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.assembler.toResource(animePersisted));
+        try {
+            var animePersisted = this.service.create(this.assembler.toEntity(anime));
+            return ResponseEntity.status(HttpStatus.CREATED).body(this.assembler.toResource(animePersisted));
+        } catch (ConflictException exception) {
+            if (exception.getObject() instanceof AnimeEntity entity) {
+                throw new ConflictException(this.assembler.toResource(entity));
+            }
+
+            throw exception;
+        }
     }
 
     @PatchMapping("/{id}")

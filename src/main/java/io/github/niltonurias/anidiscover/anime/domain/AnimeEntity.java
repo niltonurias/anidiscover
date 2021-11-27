@@ -17,6 +17,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "anime")
 public class AnimeEntity extends BaseEntity {

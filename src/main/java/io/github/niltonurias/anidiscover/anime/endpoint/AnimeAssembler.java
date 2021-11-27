@@ -14,36 +14,40 @@ public class AnimeAssembler implements BaseAssembler<AnimeResource, AnimeEntity>
     }
 
     @Override
-    public AnimeResource toResource(AnimeEntity resource) {
-        return AnimeResource
+    public AnimeResource toResource(AnimeEntity entity) {
+        var resource = AnimeResource
                 .builder()
-                    .id(resource.getId())
-                    .status(resource.getStatus())
-                    .bannerImage(resource.getBannerImage())
-                    .coverImage(resource.getCoverImage())
-                    .description(resource.getDescription())
-                    .duration(resource.getDuration())
-                    .genres(genreAssembler.toResource(resource.getGenres()))
-                    .season(resource.getSeason())
-                    .seasonYear(resource.getSeasonYear())
-                    .title(resource.getTitle())
-                .build();
-    }
-
-    @Override
-    public AnimeEntity toEntity(AnimeResource entity) {
-        return AnimeEntity
-                .builder()
-                    .id(entity.getObjectId())
+                    .id(entity.getId())
                     .status(entity.getStatus())
                     .bannerImage(entity.getBannerImage())
                     .coverImage(entity.getCoverImage())
                     .description(entity.getDescription())
                     .duration(entity.getDuration())
-                    .genres(genreAssembler.toEntity(entity.getGenres()))
+                    .genres(genreAssembler.toResource(entity.getGenres()))
                     .season(entity.getSeason())
                     .seasonYear(entity.getSeasonYear())
                     .title(entity.getTitle())
+                .build();
+
+        addSelfLink(AnimeController.class, resource);
+
+        return resource;
+    }
+
+    @Override
+    public AnimeEntity toEntity(AnimeResource resource) {
+        return AnimeEntity
+                .builder()
+                    .id(resource.getObjectId())
+                    .status(resource.getStatus())
+                    .bannerImage(resource.getBannerImage())
+                    .coverImage(resource.getCoverImage())
+                    .description(resource.getDescription())
+                    .duration(resource.getDuration())
+                    .genres(genreAssembler.toEntity(resource.getGenres()))
+                    .season(resource.getSeason())
+                    .seasonYear(resource.getSeasonYear())
+                    .title(resource.getTitle())
                 .build();
     }
 }

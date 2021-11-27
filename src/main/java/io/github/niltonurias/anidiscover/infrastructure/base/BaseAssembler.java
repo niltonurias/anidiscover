@@ -2,7 +2,9 @@ package io.github.niltonurias.anidiscover.infrastructure.base;
 
 import java.util.List;
 
-public interface BaseAssembler<RESOURCE, ENTITY> {
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+
+public interface BaseAssembler<RESOURCE extends BaseResource<RESOURCE>, ENTITY> {
     RESOURCE toResource(ENTITY entity);
     ENTITY toEntity(RESOURCE resource);
 
@@ -12,5 +14,9 @@ public interface BaseAssembler<RESOURCE, ENTITY> {
 
     default List<ENTITY> toEntity(List<RESOURCE> resources) {
         return resources.stream().map(this::toEntity).toList();
+    }
+
+    default void addSelfLink(Class<?> controller, RESOURCE resource) {
+        resource.add(linkTo(controller).slash(resource.getObjectId()).withSelfRel());
     }
 }

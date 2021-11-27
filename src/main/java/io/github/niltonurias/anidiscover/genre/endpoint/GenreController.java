@@ -1,9 +1,11 @@
 package io.github.niltonurias.anidiscover.genre.endpoint;
 
+import io.github.niltonurias.anidiscover.genre.domain.GenreEntity;
 import io.github.niltonurias.anidiscover.genre.domain.GenreService;
+import io.github.niltonurias.anidiscover.infrastructure.exceptions.ConflictException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,19 +15,20 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/genre")
 @CrossOrigin
-public class GenreController {
-    private final GenreAssembler assembler;
-    private final GenreService service;
-
-    public GenreController(final GenreAssembler assembler, final GenreService service) {
-        this.assembler = assembler;
-        this.service = service;
-    }
+public record GenreController(GenreAssembler assembler, GenreService service) {
 
     @PostMapping
     public ResponseEntity<GenreResource> create(@RequestBody GenreResource anime) {
-        var animePersisted = this.service.create(this.assembler.toEntity(anime));
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.assembler.toResource(animePersisted));
+        try {
+            var animePersisted = this.service.create(this.assembler.toEntity(anime));
+            return ResponseEntity.status(HttpStatus.CREATED).body(this.assembler.toResource(animePersisted));
+        } catch (ConflictException exception) {
+            if (exception.getObject() instanceof GenreEntity entity) {
+                throw new ConflictException(this.assembler.toResource(entity));
+            }
+
+            throw exception;
+        }
     }
 
     @PatchMapping("/{id}")
@@ -46,9 +49,8 @@ public class GenreController {
     }
 
     @GetMapping
-    public Page<GenreResource> findAll(@RequestParam(required = false, defaultValue = "0") int page,
-                                       @RequestParam(required = false, defaultValue = "20") int size) {
-        var entityPage = this.service.findAllPaged(PageRequest.of(page, size));
+    public Page<GenreResource> findAll(Pageable pageable) {
+        var entityPage = this.service.findAllPaged(pageable);
         var resources = entityPage.getContent().stream().map(assembler::toResource).toList();
         return new PageImpl<>(resources, entityPage.getPageable(), entityPage.getTotalElements());
     }
