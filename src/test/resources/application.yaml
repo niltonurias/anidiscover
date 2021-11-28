@@ -15,7 +15,7 @@ spring:
 
   # Enabling H2 Console
   datasource:
-    url: jdbc:h2:./anidiscover
+    url: jdbc:h2:mem:anidiscover
 
   h2:
     console:
