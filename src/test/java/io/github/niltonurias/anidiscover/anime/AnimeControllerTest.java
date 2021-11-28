@@ -38,6 +38,19 @@ public class AnimeControllerTest extends AbstractTester {
     }
 
     @Test
+    public void shouldReturnAConflictedAnime() throws Exception {
+        var created = createAnime(7);
+        performPost("/anime", created)
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.title", is(created.getTitle())));
+
+        var conflicted = createAnime(7);
+        performPost("/anime", conflicted)
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.title", is(conflicted.getTitle())));
+    }
+
+    @Test
     public void shouldUpdateAnAnime() throws Exception {
         var persistedAnime = createAndReturn("/anime", AnimeResource.class, createAnime(1), MediaType.APPLICATION_JSON);
 
@@ -84,7 +97,8 @@ public class AnimeControllerTest extends AbstractTester {
                 "Shinka no Mi: Shiranai Uchi ni Kachigumi Jinsei",
                 "Shin no Nakama ja Nai to Yuusha no Party wo Oidasareta node, Henkyou de Slow Life suru Koto ni shimashita",
                 "Xian Wang De Richang Shenghuo 2",
-                "Shigatsu wa Kimi no Uso"
+                "Shigatsu wa Kimi no Uso",
+                "Boku no Hero Academia"
         };
 
         return AnimeResource

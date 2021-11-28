@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -58,9 +59,8 @@ public class AnimeController {
     }
 
     @GetMapping
-    public Page<AnimeResource> findAll(@RequestParam(required = false, defaultValue = "0") int page,
-                                       @RequestParam(required = false, defaultValue = "20") int size) {
-        var entityPage = this.service.findAllPaged(PageRequest.of(page, size));
+    public Page<AnimeResource> findAll(@SortDefault("title") Pageable pageable) {
+        var entityPage = this.service.findAllPaged(pageable);
         var resources = entityPage.getContent().stream().map(assembler::toResource).toList();
         return new PageImpl<>(resources, entityPage.getPageable(), entityPage.getTotalElements());
     }
