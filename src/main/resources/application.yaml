@@ -6,9 +6,9 @@ compression:
 
 spring:
   jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
     defer-datasource-initialization: true
     hibernate:
@@ -16,13 +16,14 @@ spring:
   jackson:
     default-property-inclusion: non_null
 
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:${DATABASE_URL:qa}
+#  datasource:
+#    driver-class-name: org.postgresql.Driver
+#    url: jdbc:${DATABASE_URL:qa}
 
   # Enabling H2 Console
-#  datasource:
-#    url: jdbc:h2:./anidiscover
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:./anidiscover
 
   h2:
     console:

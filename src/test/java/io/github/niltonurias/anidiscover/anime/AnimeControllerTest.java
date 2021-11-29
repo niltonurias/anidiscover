@@ -76,7 +76,7 @@ public class AnimeControllerTest extends AbstractTester {
 
         performGet("/anime")
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.totalElements", greaterThan(0)));
+            .andExpect(jsonPath("$.page.totalElements", greaterThan(0)));
     }
 
     @Test

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.SortDefault;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -50,9 +51,8 @@ public record GenreController(GenreAssembler assembler, GenreService service) {
     }
 
     @GetMapping
-    public Page<GenreResource> findAll(@SortDefault("name") Pageable pageable) {
+    public PagedModel<GenreResource> findAll(@SortDefault("name") Pageable pageable) {
         var entityPage = this.service.findAllPaged(pageable);
-        var resources = entityPage.getContent().stream().map(assembler::toResource).toList();
-        return new PageImpl<>(resources, entityPage.getPageable(), entityPage.getTotalElements());
+        return this.assembler.toPaged(entityPage);
     }
 }

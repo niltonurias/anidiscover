@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.hateoas.server.core.Relation;
 
 import java.util.List;
 import java.util.UUID;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
+@Relation(value = "anime", collectionRelation = "animes")
 public class AnimeResource extends BaseResource<AnimeResource> {
     private String title;
     private Long seasonYear;

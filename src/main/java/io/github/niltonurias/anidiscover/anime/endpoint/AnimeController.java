@@ -3,11 +3,9 @@ package io.github.niltonurias.anidiscover.anime.endpoint;
 import io.github.niltonurias.anidiscover.anime.domain.AnimeEntity;
 import io.github.niltonurias.anidiscover.anime.domain.AnimeService;
 import io.github.niltonurias.anidiscover.infrastructure.exceptions.ConflictException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.SortDefault;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,15 +15,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/anime")
 @CrossOrigin
-public class AnimeController {
-
-    private final AnimeAssembler assembler;
-    private final AnimeService service;
-
-    public AnimeController(final AnimeAssembler assembler, final AnimeService service) {
-        this.assembler = assembler;
-        this.service = service;
-    }
+public record AnimeController(AnimeAssembler assembler, AnimeService service) {
 
     @PostMapping
     public ResponseEntity<AnimeResource> create(@RequestBody AnimeResource anime) {
@@ -59,9 +49,8 @@ public class AnimeController {
     }
 
     @GetMapping
-    public Page<AnimeResource> findAll(@SortDefault("title") Pageable pageable) {
+    public PagedModel<AnimeResource> findAll(@SortDefault("title") Pageable pageable) {
         var entityPage = this.service.findAllPaged(pageable);
-        var resources = entityPage.getContent().stream().map(assembler::toResource).toList();
-        return new PageImpl<>(resources, entityPage.getPageable(), entityPage.getTotalElements());
+        return this.assembler.toPaged(entityPage);
     }
 }

@@ -48,10 +48,11 @@ public class GenreControllerTest extends AbstractTester {
 
         performGet("/genre")
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.content.[0].id", is(persistedAction.getObjectId().toString())))
-            .andExpect(jsonPath("$.content.[0].name", is(persistedAction.getName())))
-            .andExpect(jsonPath("$.content.[1].id", is(persistedAdventure.getObjectId().toString())))
-            .andExpect(jsonPath("$.content.[1].name", is(persistedAdventure.getName())));
+            .andExpect(jsonPath("$.page.totalElements", greaterThan(0)))
+            .andExpect(jsonPath("$._embedded.genres.[0].id", is(persistedAction.getObjectId().toString())))
+            .andExpect(jsonPath("$._embedded.genres.[0].name", is(persistedAction.getName())))
+            .andExpect(jsonPath("$._embedded.genres.[1].id", is(persistedAdventure.getObjectId().toString())))
+            .andExpect(jsonPath("$._embedded.genres.[1].name", is(persistedAdventure.getName())));
     }
 
     @Test
